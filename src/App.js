@@ -26,6 +26,8 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
 function App(props) {
   const [tasks, setTasks] = useState(props.tasks);
   const [filter, setFilter] = useState('All');
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
 
   function toggleTaskCompleted(id) {
     const updatedTasks = tasks.map((task) => {
@@ -52,19 +54,34 @@ function App(props) {
     setTasks(editedTaskList);
   }
 
-  const taskList = tasks
-    .filter(FILTER_MAP[filter])
-    .map((task) => (
+  const handleSort = () => {
+    let _todoItems = [...tasks];
+    const draggedItemContent = _todoItems.splice(dragItem.current, 1)[0];
+    _todoItems.splice(dragOverItem.current, 0, draggedItemContent);
+    dragItem.current = null;
+    draggedItemContent.current = null;
+    setTasks(_todoItems);
+  };
+
+  const taskList = tasks.filter(FILTER_MAP[filter]).map((task, index) => (
+    <div
+      key={task.id}
+      draggable
+      onDragStart={(e) => (dragItem.current = index)}
+      onDragEnter={(e) => (dragOverItem.current = index)}
+      onDragEnd={handleSort}
+      onDragOver={(e) => e.preventDefault()}
+    >
       <Todo
         id={task.id}
         name={task.name}
         completed={task.completed}
-        key={task.id}
         toggleTaskCompleted={toggleTaskCompleted}
         deleteTask={deleteTask}
         editTask={editTask}
       />
-    ));
+    </div>
+  ));
 
   const filterList = FILTER_NAMES.map((name) => (
     <FilterButton
