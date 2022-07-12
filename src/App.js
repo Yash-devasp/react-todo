@@ -37,11 +37,13 @@ function App(props) {
       return task;
     });
     setTasks(updatedTasks);
+    localStorage.setItem('Tasks', JSON.stringify(updatedTasks));
   }
 
   function deleteTask(id) {
     const remainingTasks = tasks.filter((task) => id !== task.id);
     setTasks(remainingTasks);
+    localStorage.setItem('Tasks', JSON.stringify(remainingTasks));
   }
 
   function editTask(id, newName) {
@@ -52,6 +54,7 @@ function App(props) {
       return task;
     });
     setTasks(editedTaskList);
+    localStorage.setItem('Tasks', JSON.stringify(editedTaskList));
   }
 
   const handleSort = () => {
@@ -61,6 +64,7 @@ function App(props) {
     dragItem.current = null;
     draggedItemContent.current = null;
     setTasks(_todoItems);
+    localStorage.setItem('Tasks', JSON.stringify(_todoItems));
   };
 
   const taskList = tasks.filter(FILTER_MAP[filter]).map((task, index) => (
@@ -95,6 +99,7 @@ function App(props) {
   function addTask(name) {
     const newTask = { id: 'todo-' + nanoid(), name: name, completed: false };
     setTasks([...tasks, newTask]);
+    localStorage.setItem('Tasks', JSON.stringify([...tasks, newTask]));
   }
 
   const tasksNoun = taskList.length !== 1 ? 'tasks' : 'task';
